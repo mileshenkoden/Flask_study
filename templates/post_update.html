@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Оновити статтю
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <h1>Оновити статтю</h1>
+  <form method="post">
+    <div class="mb-3">
+      <label for="title" class="form-label">Назва статті</label>
+      <input type="text" id="title" name="title" class="form-control" value="{{ article.title }}" placeholder="Введіть назву" required><br>
+    </div>
+    <div class="mb-3">
+      <label for="intro" class="form-label">Вступ</label>
+      <textarea id="intro" name="intro" class="form-control" rows="3" placeholder="Введіть вступ" required>{{ article.intro }}</textarea><br>
+    </div>
+    <div class="mb-3">
+      <label for="text" class="form-label">Текст статті</label>
+      <textarea id="text" name="text" class="form-control" rows="10"  placeholder="Введіть текст статті" required>{{ article.text }}</textarea><br>
+    </div>
+    <input type="submit" class="btn btn-success" value="Оновити"><br>
+  </form>
+</div>
+{% endblock %}

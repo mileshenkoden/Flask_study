@@ -55,6 +55,25 @@ def post_delite(id):
         return "При видалені статі виникла помилка"
 
 
+@app.route("/posts/<int:id>/update", methods=['POST', 'GET'])
+def post_update(id):
+    article = Article.query.get_or_404(id)
+
+    if request.method == "POST":
+
+        article.title = request.form['title']
+        article.intro = request.form['intro']
+        article.text = request.form['text']
+
+        try:
+            db.session.commit()
+            return redirect(f'/posts/{id}')
+        except:
+            return "При оновленні статті виникла помилка"
+    else:
+
+        return render_template("post_update.html", article=article)
+
 
 @app.route("/create-article", methods=['POST', 'GET'])
 def create_article():

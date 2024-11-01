@@ -13,7 +13,7 @@
       <p>{{ article.intro }}</p>
       <p><b>Дата: {{ article.date.date() }}</b></p>
       <p>{{ article.text }}</p>
-      <a href="{{ url_for('post_detail', id=article.id) }}" class="btn btn-success"> Детальніше </a>
+      <a href="{{ url_for('post_update', id=article.id) }}" class="btn btn-success"> Оновити </a>
       <a href="{{ url_for('post_delite', id=article.id) }}" class="btn btn-danger"> Удаліть </a>
 
 
