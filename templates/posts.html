@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Усі статі
+{% endblock %}
+
+{% block body %}
+<div>
+  <h1>Усі статі</h1>
+
+  {% for el in articles %}
+    <div class="alert alert-info">
+      <h2>{{ el.title }}</h2>
+      <p>{{ el.intro }}</p>
+      <p><b>Дата: {{ el.date.date() }}</b></p>
+      <a href="posts/{{ el.id }}" class="btn btn-warning"> Детальніше </a>
+    </div>
+
+  {% endfor %}
+
+</div>
+{% endblock %}
