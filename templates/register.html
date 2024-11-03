@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Реєстрація
+{% endblock %}
+
+{% block body %}
+<h1 class="mb-4">Реєстрація</h1>
+
+{% for cat, msg in get_flashed_messages(with_categories=True) %}
+<div class="flash {{ cat }} mb-4">{{ msg }}</div>
+{% endfor %}
+
+<form action="/register" method="post" novalidate>
+    <div class="col-12 mb-4">
+        <label class="form-label">Ім'я <span class="text-body-secondary">(Optional)</span></label>
+        <input type="text" class="form-control" name="name" required placeholder="Ваше ім'я">
+    </div>
+    <div class="col-12 mb-4">
+        <label class="form-label">Email <span class="text-body-secondary">(Optional)</span></label>
+        <input type="email" class="form-control" name="email" required placeholder="you@example.com">
+    </div>
+    <div class="col-12 mb-4">
+        <label class="form-label">Пароль <span class="text-body-secondary">(Optional)</span></label>
+        <input type="password" class="form-control" name="psw" required placeholder="******">
+    </div>
+    <div class="col-12 mb-4">
+        <label class="form-label">Повтор пароля <span class="text-body-secondary">(Optional)</span></label>
+        <input type="password" class="form-control" name="psw2" required placeholder="******">
+    </div>
+
+    <div class="col-12 mt-4">
+        <input type="submit" value="Зареєструватися" class="btn btn-primary"/>
+    </div>
+</form>
+{% endblock %}
