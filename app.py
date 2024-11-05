@@ -1,16 +1,19 @@
-import math
-import time
 import os
 from flask import Flask, g, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, login_user, login_required
+from UserLogin import UserLogin
+from FDatebase import FDataBase
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.urandom(24)
 db = SQLAlchemy(app)
+
+login_meneger = LoginManager(app)
 
 class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -32,6 +35,19 @@ class Users(db.Model):
     def __repr__(self):
         return f'<User {self.name}>'
 
+dbase = None
+
+@app.before_request
+def before_request():
+    global dbase
+    dbase = FDataBase(db)
+
+
+@login_meneger.user_loader
+def load_user(user_id):
+    print("load_user")
+    return UserLogin().fromDB(user_id, dbase)
+
 @app.route('/')
 @app.route('/home')
 def index():
@@ -44,6 +60,24 @@ def buyer():
 @app.route('/about')
 def about():
     return render_template("about.html")
+
+
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    if request.method == "POST":
+        email = request.form['email']
+        password = request.form['psw']
+
+        user = dbase.getUserByEmail(email)  # тут ми отримуємо кортеж
+        if user and check_password_hash(user[3], password):  # user[3] - це psw, якщо порядок такий
+            userlogin = UserLogin().create(user)
+            login_user(userlogin)
+            return redirect(url_for('index'))
+
+        flash("Невірна пара логін/пароль", "error")
+
+    return render_template("login.html", title="Авторизація")
+
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
@@ -82,7 +116,8 @@ def post_detail(id):
     return "Статтю не знайдено", 404
 
 @app.route('/posts/<int:id>/del')
-def post_delete(id):
+@login_required
+def post_delite(id):
     article = Article.query.get_or_404(id)
 
     try:
@@ -93,7 +128,9 @@ def post_delete(id):
         return f"При видаленні статті виникла помилка: {e}"
 
 @app.route("/posts/<int:id>/update", methods=['POST', 'GET'])
+@login_required
 def post_update(id):
+
     article = Article.query.get_or_404(id)
 
     if request.method == "POST":
@@ -110,6 +147,7 @@ def post_update(id):
         return render_template("post_update.html", article=article)
 
 @app.route("/create-article", methods=['POST', 'GET'])
+@login_required
 def create_article():
     if request.method == "POST":
         title = request.form['title']
